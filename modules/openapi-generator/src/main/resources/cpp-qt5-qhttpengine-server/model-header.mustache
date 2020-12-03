@@ -9,9 +9,16 @@
 #define {{classname}}_H
 
 #include <QJsonObject>
+#include <QList>
+#include <QString>
+#include <QMap>
+#include <QDateTime>
+#include <QByteArray>
 
-{{/model}}{{/models}}{{#imports}}{{{import}}}
-{{/imports}}
+
+//{{/model}}{{/models}}{{#imports}}{{{import}}}
+//{{/imports}}
+
 
 #include "{{prefix}}Enum.h"
 #include "{{prefix}}Object.h"
@@ -22,6 +29,20 @@
 namespace {{this}} {
 {{/cppNamespaceDeclarations}}
 
+{{#vars}}
+{{^isEnum}}
+{{^isPrimitiveType}}
+{{^isBoolean}}
+{{^isContainer}} class {{{dataType}}}; {{/isContainer}}
+{{#isContainer}} class {{items.baseType}}; {{/isContainer}}
+{{/isBoolean}}
+{{/isPrimitiveType}}
+{{/isEnum}}
+{{/vars}}
+
+{{#vendorExtensions.x-has-forward-declarations}}
+{{#vendorExtensions.x-forward-declarations}}{{.}}
+{{/vendorExtensions.x-forward-declarations}}{{/vendorExtensions.x-has-forward-declarations}}
 class {{classname}} : public {{prefix}}{{^isEnum}}Object{{/isEnum}}{{#isEnum}}Enum{{/isEnum}} {
 public:
     {{classname}}();
@@ -33,7 +54,7 @@ public:
     void fromJson{{^isEnum}}Object{{/isEnum}}{{#isEnum}}Value{{/isEnum}}(QJson{{^isEnum}}Object{{/isEnum}}{{#isEnum}}Value{{/isEnum}} json) override;
     void fromJson(QString jsonString) override;
 {{^isEnum}}{{#vars}}
-    {{{dataType}}} {{getter}}() const;
+    {{{dataType}}}& {{getter}}() const;
     void {{setter}}(const {{{dataType}}} &{{name}});
     bool is_{{name}}_Set() const;
     bool is_{{name}}_Valid() const;
@@ -58,7 +79,7 @@ public:
 private:
     void initializeModel();
 {{^isEnum}}{{#vars}}
-    {{{dataType}}} {{name}};
+std::shared_ptr<{{{dataType}}}> {{name}};
     bool m_{{name}}_isSet;
     bool m_{{name}}_isValid;
 {{/vars}}{{/isEnum}}{{#isEnum}}

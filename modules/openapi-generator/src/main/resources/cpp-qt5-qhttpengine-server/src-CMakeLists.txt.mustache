@@ -7,7 +7,7 @@ set(CMAKE_AUTOMOC ON)
 OPTION(NODEBUG  "Deactivate No debugging option" "OFF")
 
 set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   -fPIC -Wall -Wno-unused-variable")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -std=c++14 -Wall -Wno-unused-variable")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -std=c++2a -Wall -Wno-unused-variable")
 
 if(${NODEBUG} STREQUAL "OFF")
 set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   -pg -g3")
@@ -39,10 +39,27 @@ link_directories(
     ${CMAKE_PREFIX_PATH}/lib
 )
 
-add_executable(${PROJECT_NAME} ${SRCS})
+add_library(${PROJECT_NAME} STATIC
+  ${SRCS}
+  )
 add_dependencies(${PROJECT_NAME} QHTTPENGINE)
-target_link_libraries(${PROJECT_NAME} Qt5Core Qt5Network ssl crypto qhttpengine)
-set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 14)
-set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD_REQUIRED ON)
+target_link_directories(${PROJECT_NAME} PUBLIC ${CMAKE_PREFIX_PATH}/lib ${EXTERNAL_INSTALL_LOCATION}/lib)
+target_link_libraries(${PROJECT_NAME} PUBLIC Qt5Core Qt5Network ssl crypto qhttpengine)
+target_include_directories(${PROJECT_NAME} PUBLIC
+  ${Qt5Core_INCLUDE_DIRS}
+  ${Qt5Network_INCLUDE_DIRS}
+  ${EXTERNAL_INSTALL_LOCATION}/include
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/models
+  ${CMAKE_CURRENT_SOURCE_DIR}/handlers
+  ${CMAKE_CURRENT_SOURCE_DIR}/requests
+  )
+install(TARGETS ${PROJECT_NAME} DESTINATION bin)
 
-install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)
+add_executable(${PROJECT_NAME}_exe ${SRCS})
+add_dependencies(${PROJECT_NAME}_exe QHTTPENGINE)
+target_link_libraries(${PROJECT_NAME}_exe Qt5Core Qt5Network ssl crypto qhttpengine)
+set_property(TARGET ${PROJECT_NAME}_exe PROPERTY CXX_STANDARD 20)
+set_property(TARGET ${PROJECT_NAME}_exe PROPERTY CXX_STANDARD_REQUIRED ON)
+
+install(TARGETS ${PROJECT_NAME}_exe RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)
