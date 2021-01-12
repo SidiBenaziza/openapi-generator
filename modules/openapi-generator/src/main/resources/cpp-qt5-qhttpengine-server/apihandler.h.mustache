@@ -3,6 +3,7 @@
 #define {{prefix}}_{{classname}}Handler_H
 
 #include <QObject>
+#include <QMap>
 
 {{#imports}}{{{import}}}
 {{/imports}}
@@ -21,7 +22,7 @@ public:
 
 
 public slots:
-    {{#operations}}{{#operation}}virtual void {{nickname}}({{#allParams}}{{{dataType}}}{{#isBodyParam}}{{/isBodyParam}} {{paramName}}{{^-last}}, {{/-last}}{{/allParams}});
+    {{#operations}}{{#operation}}virtual void {{nickname}}(QMap<QString, QString> headers{{#allParams}}, {{{dataType}}}{{#isBodyParam}}{{/isBodyParam}} {{paramName}}{{^-last}}{{/-last}}{{/allParams}});
     {{/operation}}{{/operations}}
 
 };

@@ -4,6 +4,7 @@
 #include <QJsonObject>
 #include <QVariantMap>
 #include <QDebug>
+#include <QMap>
 
 #include "{{classname}}Handler.h"
 #include "{{classname}}Request.h"
@@ -20,7 +21,7 @@ namespace {{this}} {
 
 }
 
-{{#operations}}{{#operation}}void {{classname}}Handler::{{nickname}}({{#allParams}}{{{dataType}}}{{#isBodyParam}}{{/isBodyParam}} {{paramName}}{{^-last}}, {{/-last}}{{/allParams}}) {
+{{#operations}}{{#operation}}void {{classname}}Handler::{{nickname}}(QMap<QString, QString> headers {{#allParams}}, {{{dataType}}}{{#isBodyParam}}{{/isBodyParam}} {{paramName}}{{^-last}} {{/-last}}{{/allParams}}) {
     {{#allParams}}
     Q_UNUSED({{paramName}});
     {{/allParams}}

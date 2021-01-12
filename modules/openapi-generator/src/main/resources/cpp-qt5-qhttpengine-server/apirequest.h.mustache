@@ -7,6 +7,7 @@
 #include <QMultiMap>
 #include <QNetworkReply>
 #include <QSharedPointer>
+#include <QMap>
 
 #include <qhttpengine/socket.h>
 {{#imports}}{{{import}}}
@@ -45,7 +46,7 @@ public:
     void setResponseHeaders(const QMultiMap<QString,QString>& headers);
 
 signals:
-    {{#operations}}{{#operation}}void {{nickname}}({{#allParams}}{{{dataType}}} {{paramName}}{{^-last}}, {{/-last}}{{/allParams}});
+    {{#operations}}{{#operation}}void {{nickname}}(QMap<QString, QString> headers{{#allParams}}, {{{dataType}}} {{paramName}}{{^-last}} {{/-last}}{{/allParams}});
     {{/operation}}{{/operations}}
 
 private:
