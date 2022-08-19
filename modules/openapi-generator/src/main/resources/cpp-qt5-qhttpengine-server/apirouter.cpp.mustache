@@ -53,7 +53,7 @@ void {{prefix}}ApiRouter::processRequest(QHttpEngine::Socket *socket){
 }
 
 bool {{prefix}}ApiRouter::handleRequest(QHttpEngine::Socket *socket){
-    auto reqPath = QString("%1 %2").arg(fromQHttpEngineMethod(socket->method())).arg(socket->path()).toLower();
+    auto reqPath = QString("%1 %2").arg(fromQHttpEngineMethod(socket->method())).arg(QString::fromStdString(socket->rawPath().toStdString())).toLower();
     if ( Routes.contains(reqPath) ) {
         Routes.value(reqPath).operator()(socket);
         return true;
@@ -62,7 +62,7 @@ bool {{prefix}}ApiRouter::handleRequest(QHttpEngine::Socket *socket){
 }
 
 bool {{prefix}}ApiRouter::handleRequestAndExtractPathParam(QHttpEngine::Socket *socket){
-    auto reqPath = QString("%1 %2").arg(fromQHttpEngineMethod(socket->method())).arg(socket->path()).toLower();{{#apiInfo}}{{#apis}}{{#operations}}{{#operation}}{{#hasPathParams}}
+    auto reqPath = QString("%1 %2").arg(fromQHttpEngineMethod(socket->method())).arg(socket->rawPath().toLower();{{#apiInfo}}{{#apis}}{{#operations}}{{#operation}}{{#hasPathParams}}
     {
         auto completePath = QString("%1 %2").arg("{{httpMethod}}").arg("{{{basePathWithoutHost}}}{{{path}}}").toLower();
         if ( reqPath.startsWith(completePath.leftRef( completePath.indexOf(QString("/{")))) ) {

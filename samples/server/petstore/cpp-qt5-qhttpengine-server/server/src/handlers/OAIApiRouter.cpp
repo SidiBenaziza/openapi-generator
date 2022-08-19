@@ -111,7 +111,7 @@ void OAIApiRouter::processRequest(QHttpEngine::Socket *socket){
 }
 
 bool OAIApiRouter::handleRequest(QHttpEngine::Socket *socket){
-    auto reqPath = QString("%1 %2").arg(fromQHttpEngineMethod(socket->method())).arg(socket->path()).toLower();
+    auto reqPath = QString("%1 %2").arg(fromQHttpEngineMethod(socket->method())).arg(QString::fromStdString(socket->rawPath().toStdString())).toLower();
     if ( Routes.contains(reqPath) ) {
         Routes.value(reqPath).operator()(socket);
         return true;
@@ -120,7 +120,7 @@ bool OAIApiRouter::handleRequest(QHttpEngine::Socket *socket){
 }
 
 bool OAIApiRouter::handleRequestAndExtractPathParam(QHttpEngine::Socket *socket){
-    auto reqPath = QString("%1 %2").arg(fromQHttpEngineMethod(socket->method())).arg(socket->path()).toLower();
+    auto reqPath = QString("%1 %2").arg(fromQHttpEngineMethod(socket->method())).arg(QString::fromStdString(socket->rawPath().toStdString())).toLower();
     {
         auto completePath = QString("%1 %2").arg("DELETE").arg("/v2/pet/{petId}").toLower();
         if ( reqPath.startsWith(completePath.leftRef( completePath.indexOf(QString("/{")))) ) {
