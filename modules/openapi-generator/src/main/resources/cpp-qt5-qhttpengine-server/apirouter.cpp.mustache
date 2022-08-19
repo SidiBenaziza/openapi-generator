@@ -30,6 +30,10 @@ void {{prefix}}ApiRouter::set{{classname}}Handler(QSharedPointer<{{classname}}Ha
     m{{classname}}Handler = handler;
 }{{/apis}}{{/apiInfo}}
 
+void ApiRouter::setRequestVerifier(QSharedPointer<RequestVerifier> handler) {
+    mRequestVerifier = handler;
+}
+
 void {{prefix}}ApiRouter::setUpRoutes() {
     {{#apiInfo}}{{#apis}}{{#operations}}{{#operation}}{{^hasPathParams}}
     Routes.insert(QString("%1 %2").arg("{{httpMethod}}").arg("{{{basePathWithoutHost}}}{{{path}}}").toLower(), [this](QHttpEngine::Socket *socket) {
@@ -39,6 +43,14 @@ void {{prefix}}ApiRouter::setUpRoutes() {
 }
 
 void {{prefix}}ApiRouter::processRequest(QHttpEngine::Socket *socket){
+    if(mRequestVerifier && !mRequestVerifier->jwtAuthentification(socket)) {
+        socket->setStatusCode(QHttpEngine::Socket::Forbidden);
+        if(socket->isOpen()) {
+            socket->writeHeaders();
+            socket->close();
+        }
+        return;
+    }
     if( handleRequest(socket) ){
         return;
     }

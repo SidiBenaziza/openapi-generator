@@ -62,7 +62,8 @@ public:
 
     void setUpRoutes();
     void processRequest(QHttpEngine::Socket *socket);
-    
+
+    void setRequestVerifier(QSharedPointer<RequestVerifier> handler);
     void setOAIPetApiHandler(QSharedPointer<OAIPetApiHandler> handler);
     void setOAIStoreApiHandler(QSharedPointer<OAIStoreApiHandler> handler);
     void setOAIUserApiHandler(QSharedPointer<OAIUserApiHandler> handler);
@@ -73,7 +74,8 @@ private:
     bool handleRequest(QHttpEngine::Socket *socket);
     bool handleRequestAndExtractPathParam(QHttpEngine::Socket *socket);
 
-    
+
+    QSharedPointer<RequestVerifier> mRequestVerifier;
     QSharedPointer<OAIPetApiHandler> mOAIPetApiHandler;
     QSharedPointer<OAIStoreApiHandler> mOAIStoreApiHandler;
     QSharedPointer<OAIUserApiHandler> mOAIUserApiHandler;

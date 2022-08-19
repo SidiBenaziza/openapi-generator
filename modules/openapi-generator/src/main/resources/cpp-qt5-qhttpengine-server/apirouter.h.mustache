@@ -21,6 +21,15 @@
 namespace {{this}} {
 {{/cppNamespaceDeclarations}}
 
+class RequestVerifier{
+
+    public :
+        RequestVerifier() = default;
+        virtual ~RequestVerifier() = default;
+        virtual bool jwtAuthentification(QHttpEngine::Socket *socket) = 0;
+
+    };
+
 class {{prefix}}ApiRequestHandler : public  QHttpEngine::QObjectHandler
 {
     Q_OBJECT
@@ -54,6 +63,7 @@ public:
     void processRequest(QHttpEngine::Socket *socket);
     {{#apiInfo}}{{#apis}}
     void set{{classname}}Handler(QSharedPointer<{{classname}}Handler> handler);{{/apis}}{{/apiInfo}}
+    void setRequestVerifier(QSharedPointer<RequestVerifier> handler);
 private:
     QMap<QString, std::function<void(QHttpEngine::Socket *)>> Routes;
     QMultiMap<QString, std::function<void(QHttpEngine::Socket *)>> RoutesWithPathParam;
@@ -63,6 +73,7 @@ private:
 
     {{#apiInfo}}{{#apis}}
     QSharedPointer<{{classname}}Handler> m{{classname}}Handler;{{/apis}}{{/apiInfo}}
+    QSharedPointer<RequestVerifier> mRequestVerifier;
 protected:
     // override this method to provide custom class derived from ApiHandler classes
     virtual void createApiHandlers();

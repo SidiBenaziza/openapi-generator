@@ -97,6 +97,14 @@ void OAIApiRouter::setUpRoutes() {
 }
 
 void OAIApiRouter::processRequest(QHttpEngine::Socket *socket){
+    if( mRequestVerifier && !mRequestVerifier->jwtAuthentification(socket)) {
+        socket->setStatusCode(QHttpEngine::Socket::Forbidden);
+        if(socket->isOpen()){
+            socket->writeHeaders();
+            socket->close();
+        }
+        return;
+    }
     if( handleRequest(socket) ){
         return;
     }
